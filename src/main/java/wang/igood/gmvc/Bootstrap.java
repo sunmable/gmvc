@@ -29,6 +29,7 @@ import wang.igood.gmvc.initial.AppInitial;
 * @author sunliang
 * @since 2017-11-17
 * @mail 1130437154@qq.com
+* 
 * *********************************************************
 * 1：方法摘要
 * 		1.1：init   		初始化
