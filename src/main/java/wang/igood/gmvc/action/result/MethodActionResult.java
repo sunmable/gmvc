@@ -38,8 +38,8 @@ public class MethodActionResult implements ActionResult {
 	}
 
 	/**
-	   * <a>1.2:Velocity渲染业务</a>
-	   * */
+	 * <a>1.2:Velocity渲染业务</a>
+	 * */
 	@Override
 	public void render() {
 		RequestContext requestContext = RequestContext.current();
