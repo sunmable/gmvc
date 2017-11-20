@@ -24,7 +24,7 @@ public class DefaultClassScanner implements ClassScanner {
 				return className.startsWith(packageName) && className.matches(patternStr);
 
 			}
-		}.getClassList();
+		}.getAllClassList();
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class DefaultClassScanner implements ClassScanner {
 			public boolean filterCondition(Class<?> cls) {
 				return cls.isAnnotationPresent(annotationClass);
 			}
-		}.getClassList();
+		}.getAllClassList();
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class DefaultClassScanner implements ClassScanner {
 																	// !cls.getName().contains("$");
 			}
 
-		}.getClassList();
+		}.getAllClassList();
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class DefaultClassScanner implements ClassScanner {
 				String patternStr = (null == pattern || pattern.isEmpty()) ? ".*" : pattern;
 				return pkgName.startsWith(packageName) && pkgName.matches(patternStr);
 			}
-		}.getClassList();
+		}.getAllClassList();
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class DefaultClassScanner implements ClassScanner {
 			public boolean filterCondition(Class<?> cls) { // 这里去掉了内部类
 				return cls.isAnnotationPresent(annotationClass);
 			}
-		}.getClassList();
+		}.getAllClassList();
 	}
 
 	@Override
@@ -82,7 +82,7 @@ public class DefaultClassScanner implements ClassScanner {
 																					// !cls.getName().contains("$");
 			}
 
-		}.getClassList();
+		}.getAllClassList();
 	}
 
 }
