@@ -41,11 +41,6 @@ public abstract class DefaultClassFilter {
 		return clazzes;
 	}
 
-	public final Set<Class<?>> getLocalClassList(String lib) {
-
-		return null;
-	}
-
 	public final Set<Class<?>> getClassList(Enumeration<URL> urls) {
 		// 收集符合条件的Class类容器
 		Set<Class<?>> clazzes = new HashSet<Class<?>>();
