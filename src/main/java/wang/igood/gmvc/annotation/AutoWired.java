@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /************************************************************
- * <a>标识后台服务</a>
+ * <a>自动装入请求标识</a>
  * @author sunliang
  * @since 2017-11-17
  * @mail 1130437154@qq.com
@@ -15,6 +15,6 @@ import java.lang.annotation.Target;
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Service {
+public @interface AutoWired {
 
 }

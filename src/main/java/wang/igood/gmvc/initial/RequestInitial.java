@@ -1,5 +1,6 @@
 package wang.igood.gmvc.initial;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -14,15 +15,18 @@ import org.slf4j.LoggerFactory;
 
 import wang.igood.gmvc.action.AntPathMatcher;
 import wang.igood.gmvc.action.MethodAction;
+import wang.igood.gmvc.annotation.AutoWired;
 import wang.igood.gmvc.annotation.GET;
 import wang.igood.gmvc.annotation.POST;
 import wang.igood.gmvc.annotation.Path;
 import wang.igood.gmvc.common.AppInit;
 import wang.igood.gmvc.common.Controller;
+import wang.igood.gmvc.common.Service;
 import wang.igood.gmvc.common.State.HttpMethod;
 import wang.igood.gmvc.util.scan.DefaultClassScanner;
 import wang.igood.gmvc.util.scan.DefaultMethodScanner;
 import wang.igood.gmvc.util.AnnotationUtils;
+import wang.igood.gmvc.util.ReflectionUtils;
 
 /************************************************************
 * <a>请求初始化</a>
@@ -34,7 +38,9 @@ import wang.igood.gmvc.util.AnnotationUtils;
 * 		1.1：init   				初始化
 * 		1.2：getControllers   	全项目扫描Controller的注解类
 * 		1.3：getMethodActions	获取Controller内的MethodAction
-* 		1.4：getActionmap		获取ActionMap
+* 		1.4：getService			初始化系统服务
+* 		1.5：initAutoWired		自动装入
+* 		1.6：getActionmap		获取ActionMap
 */
 public class RequestInitial implements AppInit {
 
@@ -42,6 +48,7 @@ public class RequestInitial implements AppInit {
 	private static final Map<String, Object> controllers = new HashMap<String, Object>();
 	private static final AntPathMatcher pathMatcher = new AntPathMatcher();
 	private static final Map<String,MethodAction> actionMap = new HashMap<String, MethodAction>();
+	private static Map<String,Object> autoWiredMap = new HashMap<String,Object>();
 
 	/**
 	 * <a>1.1:初始化</a>
@@ -49,7 +56,6 @@ public class RequestInitial implements AppInit {
 	@Override
 	public void init() {
 		LOG.info("initial action start...");
-		
 		//初始化控制器
 		Set<Class<? extends Controller>> controllers = getControllers();
 		LOG.info("controllerClasses size:" + controllers.size());
@@ -98,7 +104,9 @@ public class RequestInitial implements AppInit {
 			try {
 				String key = clazz.getPackage() + clazz.getName();
 				if(!controllers.containsKey(key)) {
-					controllers.put(key, clazz.newInstance());
+					Object object = initAutoWired(clazz);
+					if(object != null)
+						controllers.put(key, object);
 				}
 				Path onMethodPath = AnnotationUtils.findAnnotation(method, Path.class);
 				GET onMethodGet = AnnotationUtils.findAnnotation(method, GET.class);
@@ -123,8 +131,60 @@ public class RequestInitial implements AppInit {
 		}
 		return actions;
 	}
+	
 	/***
-	 * <a>1.3：获取ActionMap</a>
+	 * <a>1.5：获取ActionMap</a>
+	 * @return Map<String, MethodAction>
+	 * */
+	public static Map<String,Service> getService() {
+		Map<String,Service> services = new HashMap<String,Service>();
+		Set<Class<?>> sets = DefaultClassScanner.getInstance().getClassList("", ".*\\..*");
+		for (Class<?> clazz : sets) {
+			try {
+				if (Controller.class.isAssignableFrom(clazz) && !Modifier.isInterface(clazz.getModifiers())&& !Modifier.isAbstract(clazz.getModifiers()) && Modifier.isPublic(clazz.getModifiers())) {
+					Service service = (Service) clazz.newInstance();
+					services.put(clazz.getName(),service);
+					if(clazz.getInterfaces() != null) {
+						services.put(clazz.getInterfaces().getClass().getName(), service);
+					}
+				}
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return services;
+	}
+	
+	/***
+	 * <a>1.6：自动装入</a>
+	 * @return Map<String, MethodAction>
+	 * */
+	public static Object initAutoWired(Class<?> clazz){
+		Object controller = null;
+		try {
+			controller = clazz.newInstance();
+			List<Field> fields = ReflectionUtils.findFields(clazz, AutoWired.class);
+			for(Field field : fields) {
+				try {
+					String key = field.getClass().getName();
+					if(!autoWiredMap.containsKey(key)) {
+						autoWiredMap.put(key, field.getClass().newInstance());
+					}
+					ReflectionUtils.setField(field, controller, autoWiredMap.get(key));
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return controller;
+	}
+	
+	/***
+	 * <a>1.7：获取ActionMap</a>
 	 * @return Map<String, MethodAction>
 	 * */
 	public static Map<String, MethodAction> getActionmap() {
