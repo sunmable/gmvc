@@ -80,6 +80,19 @@ public class RequestInitial implements AppInit {
 		for (Class<?> clazz : sets) {
 			if (Controller.class.isAssignableFrom(clazz) && !Modifier.isInterface(clazz.getModifiers())&& !Modifier.isAbstract(clazz.getModifiers()) && Modifier.isPublic(clazz.getModifiers())) {
 				initSet.add((Class<? extends Controller>) clazz);
+			}else if(clazz instanceof Object){
+				/*初始化注入类文件********************************************************/
+				Class<?>[] interfaces = clazz.getInterfaces();
+				try {
+					Object object = clazz.newInstance();
+					for(Class<?> interface_ : interfaces) {
+						autoWiredMap.put(interface_.getName(), object);
+					}
+					autoWiredMap.put(clazz.getName(), object);
+				}catch(Exception e) {
+					continue;
+				}
+				/*初始化注入类文件********************************************************/
 			}
 		}
 		return initSet;
@@ -141,13 +154,17 @@ public class RequestInitial implements AppInit {
 			List<Field> fields = ReflectionUtils.findFields(clazz, AutoWired.class);
 			for(Field field : fields) {
 				try {
-					String key = field.getClass().getName();
+					String key = field.getType().getName();
 					if(!autoWiredMap.containsKey(key)) {
-						autoWiredMap.put(key, field.getClass().newInstance());
+						System.out.println(field.getType().getName());
+						autoWiredMap.put(key, field.getType().newInstance());
 					}
+					field.setAccessible(true);
 					ReflectionUtils.setField(field, controller, autoWiredMap.get(key));
 				}catch(Exception e) {
+					LOG.error(controller.getClass().getName()+">>"+field.getClass().getName()+">>"+"没有非空构造函数或是基本数据类型无法实现注入");
 					e.printStackTrace();
+					continue;
 				}
 			}
 			

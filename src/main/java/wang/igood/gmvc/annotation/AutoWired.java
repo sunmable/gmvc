@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * @since 2017-11-17
  * @mail 1130437154@qq.com
  * ***********************************************************/
-@Target({ ElementType.METHOD, ElementType.TYPE })
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface AutoWired {
