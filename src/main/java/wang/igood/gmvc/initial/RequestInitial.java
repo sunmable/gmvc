@@ -21,7 +21,6 @@ import wang.igood.gmvc.annotation.POST;
 import wang.igood.gmvc.annotation.Path;
 import wang.igood.gmvc.common.AppInit;
 import wang.igood.gmvc.common.Controller;
-import wang.igood.gmvc.common.Service;
 import wang.igood.gmvc.common.State.HttpMethod;
 import wang.igood.gmvc.util.scan.DefaultClassScanner;
 import wang.igood.gmvc.util.scan.DefaultMethodScanner;
@@ -38,9 +37,8 @@ import wang.igood.gmvc.util.ReflectionUtils;
 * 		1.1：init   				初始化
 * 		1.2：getControllers   	全项目扫描Controller的注解类
 * 		1.3：getMethodActions	获取Controller内的MethodAction
-* 		1.4：getService			初始化系统服务
-* 		1.5：initAutoWired		自动装入
-* 		1.6：getActionmap		获取ActionMap
+* 		1.4：initAutoWired		自动装入
+* 		1.5：getActionmap		获取ActionMap
 */
 public class RequestInitial implements AppInit {
 
@@ -133,31 +131,7 @@ public class RequestInitial implements AppInit {
 	}
 	
 	/***
-	 * <a>1.5：获取ActionMap</a>
-	 * @return Map<String, MethodAction>
-	 * */
-	public static Map<String,Service> getService() {
-		Map<String,Service> services = new HashMap<String,Service>();
-		Set<Class<?>> sets = DefaultClassScanner.getInstance().getClassList("", ".*\\..*");
-		for (Class<?> clazz : sets) {
-			try {
-				if (Controller.class.isAssignableFrom(clazz) && !Modifier.isInterface(clazz.getModifiers())&& !Modifier.isAbstract(clazz.getModifiers()) && Modifier.isPublic(clazz.getModifiers())) {
-					Service service = (Service) clazz.newInstance();
-					services.put(clazz.getName(),service);
-					if(clazz.getInterfaces() != null) {
-						services.put(clazz.getInterfaces().getClass().getName(), service);
-					}
-				}
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-		return services;
-	}
-	
-	/***
-	 * <a>1.6：自动装入</a>
+	 * <a>1.4：自动装入</a>
 	 * @return Map<String, MethodAction>
 	 * */
 	public static Object initAutoWired(Class<?> clazz){
@@ -184,7 +158,7 @@ public class RequestInitial implements AppInit {
 	}
 	
 	/***
-	 * <a>1.7：获取ActionMap</a>
+	 * <a>1.5：获取ActionMap</a>
 	 * @return Map<String, MethodAction>
 	 * */
 	public static Map<String, MethodAction> getActionmap() {
