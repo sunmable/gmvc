@@ -82,16 +82,16 @@ public class RequestInitial implements AppInit {
 				initSet.add((Class<? extends Controller>) clazz);
 			}else if(clazz instanceof Object){
 				/*初始化注入类文件********************************************************/
-//				Class<?>[] interfaces = clazz.getInterfaces();
-//				try {
-//					Object object = clazz.newInstance();
-//					for(Class<?> interface_ : interfaces) {
-//						autoWiredMap.put(interface_.getName(), object);
-//					}
-//					autoWiredMap.put(clazz.getName(), object);
-//				}catch(Exception e) {
-//					continue;
-//				}
+				Class<?>[] interfaces = clazz.getInterfaces();
+				try {
+					Object object = clazz.newInstance();
+					for(Class<?> interface_ : interfaces) {
+						autoWiredMap.put(interface_.getName(), object);
+					}
+					autoWiredMap.put(clazz.getName(), object);
+				}catch(Exception e) {
+					continue;
+				}
 				/*初始化注入类文件********************************************************/
 			}
 		}
