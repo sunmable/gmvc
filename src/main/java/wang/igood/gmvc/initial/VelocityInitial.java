@@ -55,7 +55,7 @@ public class VelocityInitial implements AppInit{
 	    p.put("runtime.log.logsystem.log4j.category", "velocity_log");
 	    p.put("file.resource.loader.cache", "true");
 	    p.put("file.resource.loader.modificationCheckInterval", "0");
-	    p.put("file.resource.loader.path", this.getClass().getClassLoader().getResource("").getPath()+"/templates");
+	    p.put("file.resource.loader.path", Constant.WEBAPPPATH);
 	    return p;
 	}
 }
