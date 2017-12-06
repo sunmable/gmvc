@@ -18,7 +18,6 @@ import wang.igood.gmvc.context.RequestContext;
 public class ResourceActionResult implements ActionResult {
 
 	private String path;
-	
 	/**
 	 * <a>1.1:构造函数</a>
 	 * @param viewName 		Html文件名

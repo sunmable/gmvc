@@ -50,7 +50,7 @@ public class Bootstrap implements Filter {
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		long start = System.currentTimeMillis();
-		Constant.WEBAPPPATH = this.getClass().getClassLoader().getResource("").getPath();
+		Constant.WEBAPPPATH = this.getClass().getClassLoader().getResource("").getPath()+"META-INF";
 		logger.info(Constant.WEBAPPPATH);
 		if (hasInit.compareAndSet(false, true)) {
 			AppInitial.initial();

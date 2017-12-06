@@ -26,6 +26,11 @@ public class ResourceInitial implements AppInit{
 	
 	private static final Logger LOG = LoggerFactory.getLogger(ResourceInitial.class);
 	private static final Map<String,ResourceAction> resourceActionMap = new HashMap<String, ResourceAction>();
+	private static String RESPATH;
+	
+	public ResourceInitial() {
+		RESPATH = Constant.WEBAPPPATH+"/statics";
+	}
 	
 	/**
 	 * <a>1.1:初始化</a>
@@ -33,22 +38,21 @@ public class ResourceInitial implements AppInit{
 	@Override
 	public void init() {
 		LOG.info("initial resource start...");
-		List<ResourceAction> actions = getResourceActions(Constant.WEBAPPPATH+"/statics");
+		List<ResourceAction> actions = getResourceActions(RESPATH);
 		for(ResourceAction action : actions) {
-			String key = action.path().replace("/statics", "");
-			LOG.info("path:"+action.path());
+			String key = action.path().replace(RESPATH, "").replace("/statics", "");
+			LOG.info("key:{} value:{}",key,action.path());
 			resourceActionMap.put(key, action);
 		}
 		LOG.info("initial resource complete...");
 	}
 	
 	private List<ResourceAction> getResourceActions(String basePath) {
-		LOG.info("资源目录:"+basePath);
 		List<ResourceAction> actions = new ArrayList<ResourceAction>();
 		File file = new File(basePath);
 		List<String> fileNames = getFilesPath(file);
 		for(String fileName : fileNames) {
-			ResourceAction resourceAction = new ResourceAction(fileName);
+			ResourceAction resourceAction = new ResourceAction("/statics"+fileName);
 			actions.add(resourceAction);
 		}
 		return actions;
@@ -57,7 +61,7 @@ public class ResourceInitial implements AppInit{
 	private List<String> getFilesPath(File file){
 		List<String> fileNames = new ArrayList<>();
 		if(!file.isDirectory()) {
-			String key = file.getAbsolutePath().replaceAll(Constant.WEBAPPPATH, "").replaceAll(" ", "").trim();
+			String key = file.getAbsolutePath().replaceAll(RESPATH, "").replaceAll(" ", "").trim();
 			fileNames.add(key);
 		}else {
 			for(File file_ : file.listFiles()) {
