@@ -29,7 +29,7 @@ public class ResourceInitial implements AppInit{
 	private static String RESPATH;
 	
 	public ResourceInitial() {
-		RESPATH = Constant.WEBAPPPATH+"statics";
+		RESPATH = Constant.WEBAPPPATH+"/statics";
 	}
 	
 	/**
@@ -38,9 +38,11 @@ public class ResourceInitial implements AppInit{
 	@Override
 	public void init() {
 		LOG.info("initial resource start...");
+		LOG.debug("RESPATH:{}",RESPATH);
 		List<ResourceAction> actions = getResourceActions(RESPATH);
 		for(ResourceAction action : actions) {
-			String key = action.path().replace(RESPATH, "").replace("statics", "");
+			String key = action.path().replace(RESPATH, "").replace("/statics", "");
+			LOG.info("key:{},path:{}",key,action.path());
 			resourceActionMap.put(key, action);
 		}
 		LOG.info("initial resource complete...");

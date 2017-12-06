@@ -53,7 +53,7 @@ public class MethodActionResult implements ActionResult {
 		VelocityWriter vw = null;
 		try {
 			vw = new VelocityWriter(response.getWriter());
-			String path = "templates" + "\\" + viewName + suffix;
+			String path = "templates" +"\\"+ viewName + suffix;
 			Template template = Velocity.getTemplate(path);
 			template.merge(context, vw);
 			vw.flush();
