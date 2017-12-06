@@ -2,7 +2,6 @@ package wang.igood.gmvc.util.scan;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
 import java.util.Set;
 
 public class DefaultClassScanner implements ClassScanner {
