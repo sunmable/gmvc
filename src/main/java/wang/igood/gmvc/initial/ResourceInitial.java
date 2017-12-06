@@ -36,12 +36,14 @@ public class ResourceInitial implements AppInit{
 		List<ResourceAction> actions = getResourceActions(Constant.WEBAPPPATH+"/statics");
 		for(ResourceAction action : actions) {
 			String key = action.path().replace("/statics", "");
+			LOG.info("path:"+action.path());
 			resourceActionMap.put(key, action);
 		}
 		LOG.info("initial resource complete...");
 	}
 	
 	private List<ResourceAction> getResourceActions(String basePath) {
+		LOG.info("资源目录:"+basePath);
 		List<ResourceAction> actions = new ArrayList<ResourceAction>();
 		File file = new File(basePath);
 		List<String> fileNames = getFilesPath(file);

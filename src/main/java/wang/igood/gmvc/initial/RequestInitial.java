@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,9 +17,11 @@ import org.slf4j.LoggerFactory;
 import wang.igood.gmvc.action.AntPathMatcher;
 import wang.igood.gmvc.action.MethodAction;
 import wang.igood.gmvc.annotation.AutoWired;
+import wang.igood.gmvc.annotation.DAO;
 import wang.igood.gmvc.annotation.GET;
 import wang.igood.gmvc.annotation.POST;
 import wang.igood.gmvc.annotation.Path;
+import wang.igood.gmvc.annotation.Service;
 import wang.igood.gmvc.common.AppInit;
 import wang.igood.gmvc.common.Controller;
 import wang.igood.gmvc.common.State.HttpMethod;
@@ -43,7 +46,6 @@ import wang.igood.gmvc.util.ReflectionUtils;
 public class RequestInitial implements AppInit {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RequestInitial.class);
-	private static final Map<String, Object> controllers = new HashMap<String, Object>();
 	private static final AntPathMatcher pathMatcher = new AntPathMatcher();
 	private static final Map<String,MethodAction> actionMap = new HashMap<String, MethodAction>();
 	private static Map<String,Object> autoWiredMap = new HashMap<String,Object>();
@@ -54,8 +56,11 @@ public class RequestInitial implements AppInit {
 	@Override
 	public void init() {
 		LOG.info("initial action start...");
-		//初始化控制器
+		//初始化控制器&控制器
 		Set<Class<? extends Controller>> controllers = getControllers();
+		initServiceAndDAO();
+		initController(controllers);
+		initAutoWired();
 		LOG.info("controllerClasses size:" + controllers.size());
 		
 		//初始化方法
@@ -80,8 +85,19 @@ public class RequestInitial implements AppInit {
 		for (Class<?> clazz : sets) {
 			if (Controller.class.isAssignableFrom(clazz) && !Modifier.isInterface(clazz.getModifiers())&& !Modifier.isAbstract(clazz.getModifiers()) && Modifier.isPublic(clazz.getModifiers())) {
 				initSet.add((Class<? extends Controller>) clazz);
-			}else if(clazz instanceof Object){
-				/*初始化注入类文件********************************************************/
+			}
+		}
+		return initSet;
+	}
+	
+	/***
+	 * <a>1.2.1：获取项目中有service，dao标识的class</a>
+	 * */
+	private void initServiceAndDAO() {
+		Set<Class<?>> sets = DefaultClassScanner.getInstance().getClassList("", ".*\\..*");
+		for (Class<?> clazz : sets) {
+			Service onService = AnnotationUtils.findAnnotation(clazz, Service.class);
+			if(onService != null) {
 				Class<?>[] interfaces = clazz.getInterfaces();
 				try {
 					Object object = clazz.newInstance();
@@ -92,12 +108,35 @@ public class RequestInitial implements AppInit {
 				}catch(Exception e) {
 					continue;
 				}
-				/*初始化注入类文件********************************************************/
+			}
+			DAO onDAO = AnnotationUtils.findAnnotation(clazz, DAO.class);
+			if(onDAO != null) {
+				try {
+					Object object = clazz.newInstance();
+					autoWiredMap.put(clazz.getName(), object);
+				}catch(Exception e) {
+					continue;
+				}
 			}
 		}
-		return initSet;
 	}
-
+	
+	/***
+	 * <a>1.2.2：实例化控制器</a>
+	 * */
+	private void initController(Set<Class<? extends Controller>> clazzs) {
+		for (Class<? extends Controller> clazz : clazzs) {
+			String key = clazz.getPackage() + clazz.getName();
+			if(!autoWiredMap.containsKey(key)) {
+				try {
+					autoWiredMap.put(key, clazz.newInstance());
+				} catch (InstantiationException | IllegalAccessException e) {
+					LOG.error(e.getLocalizedMessage());
+					continue;
+				}
+			}
+		}
+	}
 	/***
 	 * <a>1.3：获取Controller内的MethodAction</a>
 	 * @param Class<? extends Controler>
@@ -110,15 +149,9 @@ public class RequestInitial implements AppInit {
 			return actions;
 		String onControllerUrl = (onControllerPath == null) ? "/" : onControllerPath.value();
 		List<Method> mList = DefaultMethodScanner.getInstance().getMethodListByAnnotation(clazz, Path.class);// 获得Path注解的方法
-		LOG.info("controllerPATH:"+onControllerUrl);
 		for (Method method : mList) {
 			try {
 				String key = clazz.getPackage() + clazz.getName();
-				if(!controllers.containsKey(key)) {
-					Object object = initAutoWired(clazz);
-					if(object != null)
-						controllers.put(key, object);
-				}
 				Path onMethodPath = AnnotationUtils.findAnnotation(method, Path.class);
 				GET onMethodGet = AnnotationUtils.findAnnotation(method, GET.class);
 				POST onMethodPost = AnnotationUtils.findAnnotation(method, POST.class);
@@ -128,7 +161,7 @@ public class RequestInitial implements AppInit {
 				
 				String onMethodUrl = (onControllerPath == null) ? "/" : onMethodPath.value();
 				String url = pathMatcher.combine(onControllerUrl, onMethodUrl);
-				MethodAction methodAction = new MethodAction(controllers.get(key),method,url);
+				MethodAction methodAction = new MethodAction(autoWiredMap.get(key),method,url);
 				if(isGet)
 					methodAction.getSupportMethods().add(HttpMethod.GET);
 				if(isPost)
@@ -147,31 +180,32 @@ public class RequestInitial implements AppInit {
 	 * <a>1.4：自动装入</a>
 	 * @return Map<String, MethodAction>
 	 * */
-	public static Object initAutoWired(Class<?> clazz){
-		Object controller = null;
+	@SuppressWarnings("rawtypes")
+	public static void initAutoWired(){
 		try {
-			controller = clazz.newInstance();
-			List<Field> fields = ReflectionUtils.findFields(clazz, AutoWired.class);
-			for(Field field : fields) {
-				try {
-					String key = field.getType().getName();
-					if(!autoWiredMap.containsKey(key)) {
-						System.out.println(field.getType().getName());
-						autoWiredMap.put(key, field.getType().newInstance());
+			Iterator iter = autoWiredMap.entrySet().iterator();
+			while (iter.hasNext()) {
+				Map.Entry entry = (Map.Entry) iter.next();
+				Object val = entry.getValue();
+				List<Field> fields = ReflectionUtils.findFields(val.getClass(), AutoWired.class);
+				for(Field field : fields) {
+					try {
+						String key = field.getType().getName();
+						if(!autoWiredMap.containsKey(key)) {
+							autoWiredMap.put(key, field.getType().newInstance());
+						}
+						field.setAccessible(true);
+						ReflectionUtils.setField(field, val, autoWiredMap.get(key));
+					}catch(Exception e) {
+						LOG.error(val.getClass().getName()+">>"+field.getClass().getName()+">>"+"没有非空构造函数或是基本数据类型无法实现注入");
+						e.printStackTrace();
+						continue;
 					}
-					field.setAccessible(true);
-					ReflectionUtils.setField(field, controller, autoWiredMap.get(key));
-				}catch(Exception e) {
-					LOG.error(controller.getClass().getName()+">>"+field.getClass().getName()+">>"+"没有非空构造函数或是基本数据类型无法实现注入");
-					e.printStackTrace();
-					continue;
 				}
 			}
-			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-		return controller;
 	}
 	
 	/***

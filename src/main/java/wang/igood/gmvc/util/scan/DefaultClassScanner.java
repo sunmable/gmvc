@@ -2,11 +2,11 @@ package wang.igood.gmvc.util.scan;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
 import java.util.Set;
 
 public class DefaultClassScanner implements ClassScanner {
 	private static final DefaultClassScanner Instance = new DefaultClassScanner();
-
 	private DefaultClassScanner() {
 	}
 
@@ -16,7 +16,7 @@ public class DefaultClassScanner implements ClassScanner {
 
 	@Override
 	public Set<Class<?>> getClassList(final String packageName, final String pattern) {
-		return new DefaultClassFilter(packageName) {
+		Set<Class<?>> clazzs = new DefaultClassFilter(packageName) {
 			@Override
 			public boolean filterCondition(Class<?> cls) {
 				String className = cls.getName();
@@ -25,6 +25,7 @@ public class DefaultClassScanner implements ClassScanner {
 
 			}
 		}.getAllClassList();
+		return clazzs;
 	}
 
 	@Override
