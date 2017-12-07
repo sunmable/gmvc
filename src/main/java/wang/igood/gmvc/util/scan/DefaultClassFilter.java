@@ -164,9 +164,15 @@ public abstract class DefaultClassFilter {
 							String jarEntryName = entry.getName();
 							// 这里我们需要过滤不是class文件和不在basePack包名下的类
 							if (jarEntryName.contains(".class")) {
-								String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replace("/", ".");
-								Class<?> cls = Class.forName(className);
-								clazzes.add(cls);
+								try {
+									String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replace("/", ".");
+									Class<?> cls = Class.forName(className);
+									clazzes.add(cls);
+								}catch(Exception e) {
+									e.printStackTrace();
+									continue;
+								}
+								
 							}
 						}
 					}
