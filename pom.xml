@@ -4,7 +4,7 @@
 
 	<groupId>wang.igood</groupId>
 	<artifactId>gmvc</artifactId>
-	<version>0.0.5</version>
+	<version>0.0.7</version>
 	<packaging>jar</packaging>
 	<name>gmvc</name>
 	<url>http://maven.apache.org</url>
@@ -13,7 +13,6 @@
 		<jdk.version>1.7</jdk.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<github.global.server>github</github.global.server>
-		<destDir>${project.build.outputDirectory}/META-INF/resources/</destDir>
 	</properties>
 
 
@@ -46,17 +45,6 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.25</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>bootstrap</artifactId>
-			<version>3.3.7-1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>jquery</artifactId>
-			<version>3.1.1</version>
 		</dependency>
 
 		<dependency>
@@ -141,7 +129,7 @@
 		<resources>
 			<resource>
 				<directory>${project.basedir}/src/main/resources</directory>
-				<targetPath>${destDir}</targetPath>
+				<targetPath>${project.build.outputDirectory}/</targetPath>
 			</resource>
 		</resources>
 	</build>

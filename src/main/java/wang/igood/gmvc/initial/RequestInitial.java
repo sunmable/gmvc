@@ -191,11 +191,13 @@ public class RequestInitial implements AppInit {
 				for(Field field : fields) {
 					try {
 						String key = field.getType().getName();
-						if(!autoWiredMap.containsKey(key)) {
-							autoWiredMap.put(key, field.getType().newInstance());
+						Object obj = null;
+						obj = autoWiredMap.get(key);
+						if(obj == null) {
+							obj = field.getType().newInstance();
 						}
 						field.setAccessible(true);
-						ReflectionUtils.setField(field, val, autoWiredMap.get(key));
+						ReflectionUtils.setField(field, val, obj);
 					}catch(Exception e) {
 						LOG.error(val.getClass().getName()+">>"+field.getClass().getName()+">>"+"没有非空构造函数或是基本数据类型无法实现注入");
 						e.printStackTrace();

@@ -42,7 +42,7 @@ public class ResourceInitial implements AppInit{
 		List<ResourceAction> actions = getResourceActions(RESPATH);
 		for(ResourceAction action : actions) {
 			String key = action.path().replace(RESPATH, "").replace("/statics", "");
-			LOG.info("key:{},path:{}",key,action.path());
+			LOG.debug("key:{},path:{}",key,action.path());
 			resourceActionMap.put(key, action);
 		}
 		LOG.info("initial resource complete...");
@@ -53,7 +53,7 @@ public class ResourceInitial implements AppInit{
 		File file = new File(basePath);
 		List<String> fileNames = getFilesPath(file);
 		for(String fileName : fileNames) {
-			ResourceAction resourceAction = new ResourceAction("/statics"+fileName);
+			ResourceAction resourceAction = new ResourceAction(fileName);
 			actions.add(resourceAction);
 		}
 		return actions;
