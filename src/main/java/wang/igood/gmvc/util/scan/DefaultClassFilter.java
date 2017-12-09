@@ -15,6 +15,9 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import wang.igood.gmvc.Constant;
+import wang.igood.gmvc.util.ClassUtils;
+
 public abstract class DefaultClassFilter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultClassFilter.class);
 	protected static ClassLoader DefaultClassLoader = Thread.currentThread().getContextClassLoader();
@@ -103,6 +106,9 @@ public abstract class DefaultClassFilter {
 				}
 			});
 			// 遍历文件或目录
+			if (files == null || files.length == 0) {
+				return;
+			}
 			for (File file : files) {
 				String fileName = file.getName();
 				// 判断是否为文件或目录
@@ -130,7 +136,6 @@ public abstract class DefaultClassFilter {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOGGER.error("find class error！", e);
 		}
 	}
@@ -145,46 +150,56 @@ public abstract class DefaultClassFilter {
 			LOGGER.debug("add class:{}", cls.getName());
 		}
 	}
-	
-	
-	private Set<Class<?>>  getLocalClass(String localPath) {
+
+	private Set<Class<?>> getLocalClass(String localPath) {
 		try {
 			Set<Class<?>> clazzes = new HashSet<Class<?>>();
 			File files = new File(localPath);
 			for (File file : files.listFiles()) {
 				String fileName = file.getName();
-				String protocol = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length());
-				if("jar".equals(protocol)) {
+				String protocol = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
+				if ("jar".equals(protocol)) {
 					jarFile = new JarFile(file.getAbsolutePath());
 					if (jarFile != null) {
 						// 得到该jar文件下面的类实体
 						Enumeration<JarEntry> jarEntryEnumeration = jarFile.entries();
 						while (jarEntryEnumeration.hasMoreElements()) {
+
 							JarEntry entry = jarEntryEnumeration.nextElement();
 							String jarEntryName = entry.getName();
-							// 这里我们需要过滤不是class文件和不在basePack包名下的类
-							if (jarEntryName.contains(".class")) {
+							LOGGER.debug("load jarEntryName name is :{}", jarEntryName);
+							if (jarEntryName.charAt(0) == '/') {
+								jarEntryName = jarEntryName.substring(1);
+							}
+							// 这里我们需要过滤不是class文件
+							if (jarEntryName.contains(".class") && !entry.isDirectory()) {
 								try {
 									String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replace("/", ".");
-									Class<?> cls = Class.forName(className);
-									clazzes.add(cls);
-								}catch(Exception e) {
-									e.printStackTrace();
+									for(String path : Constant.scanBasePackage) {
+										if(className.contains(path)) {
+											Class<?> cls = ClassUtils.forName(className, ClassUtils.getDefaultClassLoader());
+											if (cls != null)
+												clazzes.add(cls);
+										}
+									}
+									
+								} catch (Exception e) {
+									LOGGER.error(e.getLocalizedMessage());
 									continue;
 								}
-								
 							}
+
 						}
 					}
 				}
 			}
 			return clazzes;
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
+
 	private static String getProjectPath() {
 
 		java.net.URL url = DefaultClassFilter.class.getProtectionDomain().getCodeSource().getLocation();

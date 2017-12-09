@@ -5,7 +5,7 @@
 	<groupId>wang.igood</groupId>
 	<artifactId>gmvc</artifactId>
 	<version>0.0.7</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 	<name>gmvc</name>
 	<url>http://maven.apache.org</url>
 
