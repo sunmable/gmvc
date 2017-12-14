@@ -18,6 +18,7 @@ public class ResourceAction implements Action {
 	public ResourceAction(String path) {
 		this.path = path;
 		initHttpMethods();
+		
 	}
 
 	private void initHttpMethods() {

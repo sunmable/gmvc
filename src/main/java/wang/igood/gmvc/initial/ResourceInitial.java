@@ -29,7 +29,7 @@ public class ResourceInitial implements AppInit{
 	private static String RESPATH;
 	
 	public ResourceInitial() {
-		RESPATH = Constant.WEBAPPPATH+"/statics";
+		RESPATH = Constant.WEBAPPPATH+"/resources";
 	}
 	
 	/**
@@ -41,11 +41,10 @@ public class ResourceInitial implements AppInit{
 		LOG.debug("RESPATH:{}",RESPATH);
 		List<ResourceAction> actions = getResourceActions(RESPATH);
 		for(ResourceAction action : actions) {
-			String key = action.path().replace(RESPATH, "").replace("/statics", "");
-			LOG.debug("key:{},path:{}",key,action.path());
+			String key = action.path().replace(RESPATH, "").replace(" ", "");
+			LOG.debug("----------key:{},path:{}",key,action.path());
 			resourceActionMap.put(key, action);
 		}
-		LOG.info("initial resource complete...");
 	}
 	
 	private List<ResourceAction> getResourceActions(String basePath) {
@@ -53,7 +52,7 @@ public class ResourceInitial implements AppInit{
 		File file = new File(basePath);
 		List<String> fileNames = getFilesPath(file);
 		for(String fileName : fileNames) {
-			ResourceAction resourceAction = new ResourceAction(fileName);
+			ResourceAction resourceAction = new ResourceAction(""+fileName);
 			actions.add(resourceAction);
 		}
 		return actions;
@@ -62,7 +61,7 @@ public class ResourceInitial implements AppInit{
 	private List<String> getFilesPath(File file){
 		List<String> fileNames = new ArrayList<>();
 		if(!file.isDirectory()) {
-			String key = file.getAbsolutePath().replaceAll(RESPATH, "").replaceAll(" ", "").trim();
+			String key = file.getAbsolutePath().replace(RESPATH, "").replaceAll(" ", "").trim();
 			fileNames.add(key);
 		}else {
 			for(File file_ : file.listFiles()) {

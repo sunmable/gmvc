@@ -32,6 +32,8 @@ public class ResourceActionResult implements ActionResult {
 		HttpServletRequest request = beat.getRequest();
 		HttpServletResponse response = beat.getResponse();
 		try {
+			System.out.println("new path"+request.getRealPath("/a.png"));
+			request.getRequestDispatcher("/resources/a.png");
 			request.getRequestDispatcher(path).forward(request, response);
 		} catch (Throwable e) {
 			e.printStackTrace();

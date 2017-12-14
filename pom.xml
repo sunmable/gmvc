@@ -5,10 +5,8 @@
 	<groupId>wang.igood</groupId>
 	<artifactId>gmvc</artifactId>
 	<version>0.0.7</version>
-	<name>gmvc</name>
-	<url>http://maven.apache.org</url>
 	<packaging>jar</packaging>
-	
+
 	<properties>
 		<jdk.version>1.7</jdk.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -106,18 +104,6 @@
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
-				</configuration>
-			</plugin>
-			<!-- Jar包插件 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.6</version>
-				<configuration>
-					<excludes>
-						<exclude>*.dtd</exclude>
-						<exclude>*.xml</exclude>
-					</excludes>
 				</configuration>
 			</plugin>
 			<!-- 测试状态下添加Jetty容器 -->
