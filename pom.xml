@@ -12,12 +12,19 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<github.global.server>github</github.global.server>
 	</properties>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-servlet-api</artifactId>
 			<version>7.0.73</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -67,10 +74,13 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/target</outputDirectory>
+							<outputDirectory>src/main/webapp</outputDirectory>
 							<resources>
 								<resource>
-									<directory>src/main/resources/</directory>
+									<directory>src/main/resources/META-INF/resources</directory>
+									<includes>
+										<include>**/**.**</include>
+									</includes>
 									<filtering>true</filtering>
 								</resource>
 							</resources>
@@ -104,6 +114,16 @@
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
+				</configuration>
+			</plugin>
+			<!-- jar -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
 				</configuration>
 			</plugin>
 			<!-- 测试状态下添加Jetty容器 -->

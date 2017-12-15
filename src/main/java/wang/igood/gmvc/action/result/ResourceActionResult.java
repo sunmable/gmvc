@@ -3,6 +3,9 @@ package wang.igood.gmvc.action.result;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import wang.igood.gmvc.context.RequestContext;
 
 /************************************************************
@@ -17,6 +20,7 @@ import wang.igood.gmvc.context.RequestContext;
  */
 public class ResourceActionResult implements ActionResult {
 
+	private final static Logger logger = LoggerFactory.getLogger(ResourceActionResult.class);
 	private String path;
 	/**
 	 * <a>1.1:构造函数</a>
@@ -32,9 +36,8 @@ public class ResourceActionResult implements ActionResult {
 		HttpServletRequest request = beat.getRequest();
 		HttpServletResponse response = beat.getResponse();
 		try {
-			System.out.println("new path"+request.getRealPath("/a.png"));
-			request.getRequestDispatcher("/resources/a.png");
-			request.getRequestDispatcher(path).forward(request, response);
+			logger.debug("resource path is " + path);
+			request.getRequestDispatcher(path).include(request, response);
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
