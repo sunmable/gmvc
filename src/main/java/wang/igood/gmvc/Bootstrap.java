@@ -36,7 +36,7 @@ import wang.igood.gmvc.initial.AppInitial;
 * 		1.2：doFilter   	请求过滤分发
 * 		1.3：destroy		消亡
 */
-@WebFilter(urlPatterns = { "/*" }, asyncSupported = true)
+//@WebFilter(urlPatterns = { "/*" }, asyncSupported = true)
 public class Bootstrap implements Filter {
 
 	private static final Logger logger = LoggerFactory.getLogger(Bootstrap.class);

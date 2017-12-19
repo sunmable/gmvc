@@ -1,7 +1,6 @@
 package wang.igood.gmvc.util;
 
 import java.beans.Introspector;
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

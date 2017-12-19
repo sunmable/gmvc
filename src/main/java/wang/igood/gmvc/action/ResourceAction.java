@@ -1,5 +1,6 @@
 package wang.igood.gmvc.action;
 
+import java.io.File;
 import java.util.Set;
 
 import wang.igood.gmvc.action.result.ActionResult;
@@ -14,9 +15,11 @@ public class ResourceAction implements Action {
 
 	private final String path;
 	private Set<HttpMethod> supportMethods = HttpMethod.suportHttpMethods();
+	private File resourceFile;
 
-	public ResourceAction(String path) {
+	public ResourceAction(String path,File resourceFile) {
 		this.path = path;
+		this.resourceFile = resourceFile;
 		initHttpMethods();
 		
 	}
@@ -32,7 +35,7 @@ public class ResourceAction implements Action {
 
 	@Override
 	public ActionResult invoke() {
-		return new ResourceActionResult(path);
+		return new ResourceActionResult(path,resourceFile);
 	}
 
 	@Override

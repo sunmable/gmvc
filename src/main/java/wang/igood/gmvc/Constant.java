@@ -16,7 +16,7 @@ public class Constant {
 	public static ArrayList<String> scanBasePackage = new ArrayList<String>();
 	
 	public static void  init() {
-		WEBAPPPATH =Constant.class.getClassLoader().getResource("").getPath()+"META-INF";
+		WEBAPPPATH =Constant.class.getClassLoader().getResource("").getPath();
 		InputStream in = Constant.class.getResourceAsStream("application.properties");
 		scanBasePackage.add("wang.igood.gmvc");
 		if(in != null) {

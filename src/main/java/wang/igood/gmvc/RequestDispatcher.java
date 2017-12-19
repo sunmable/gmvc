@@ -124,8 +124,6 @@ public class RequestDispatcher {
 		ResourceAction methodAction_ = ResourceInitial.getResourceactionmap().get(uri);
 		if(methodAction_ != null  && methodAction_.matchHttpMethod()) {
 			methodAction = methodAction_;
-		}else {
-			methodAction_ = new ResourceAction(uri);
 		}
 		return methodAction;
 	}

@@ -29,7 +29,7 @@ public class ResourceInitial implements AppInit{
 	private static String RESPATH;
 	
 	public ResourceInitial() {
-		RESPATH = Constant.WEBAPPPATH+"/resources";
+		RESPATH = Constant.WEBAPPPATH+"statics";
 	}
 	
 	/**
@@ -50,22 +50,22 @@ public class ResourceInitial implements AppInit{
 	private List<ResourceAction> getResourceActions(String basePath) {
 		List<ResourceAction> actions = new ArrayList<ResourceAction>();
 		File file = new File(basePath);
-		List<String> fileNames = getFilesPath(file);
-		for(String fileName : fileNames) {
-			ResourceAction resourceAction = new ResourceAction(""+fileName);
+		HashMap<String,File>  fileMap = getFilesPath(file);
+		for (Map.Entry<String, File> entry : fileMap.entrySet()) {
+			ResourceAction resourceAction = new ResourceAction(entry.getKey(),entry.getValue());
 			actions.add(resourceAction);
 		}
 		return actions;
 	}
 	
-	private List<String> getFilesPath(File file){
-		List<String> fileNames = new ArrayList<>();
+	private HashMap<String,File> getFilesPath(File file){
+		HashMap<String,File> fileNames = new HashMap<String,File>();
 		if(!file.isDirectory()) {
 			String key = file.getAbsolutePath().replace(RESPATH, "").replaceAll(" ", "").trim();
-			fileNames.add(key);
+			fileNames.put(key,file);
 		}else {
 			for(File file_ : file.listFiles()) {
-				fileNames.addAll(getFilesPath(file_));
+				fileNames.putAll(getFilesPath(file_));
 			}
 		}
 		return fileNames;
