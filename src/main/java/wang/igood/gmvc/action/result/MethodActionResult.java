@@ -60,7 +60,8 @@ public class MethodActionResult implements ActionResult {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			vw.recycle(null);
+			if(vw != null)
+				vw.recycle(null);
 		}
 	}
 }

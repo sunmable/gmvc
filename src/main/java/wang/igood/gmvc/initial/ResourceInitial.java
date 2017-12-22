@@ -29,7 +29,7 @@ public class ResourceInitial implements AppInit{
 	private static String RESPATH;
 	
 	public ResourceInitial() {
-		RESPATH = Constant.WEBAPPPATH+"statics";
+		RESPATH = Constant.WEBAPPPATH+"META-INF/resources/statics";
 	}
 	
 	/**

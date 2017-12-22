@@ -1,19 +1,9 @@
 package wang.igood.gmvc.action.result;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.velocity.app.Velocity;
+import javax.servlet.ServletException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,26 +36,9 @@ public class ResourceActionResult implements ActionResult {
 	}
 	
 	@Override
-	public void render() {
+	public void render() throws ServletException, IOException {
+		logger.debug("path:"+path);
 		RequestContext beat = RequestContext.current();
-		HttpServletRequest request = beat.getRequest();
-		HttpServletResponse response = beat.getResponse();
-		if(resourceFile == null) {
-			return ;
-		}
-		PrintWriter pw = null;
-		try {
-			StringWriter stringWriter = new StringWriter();
-			IOUtils.copy(new FileInputStream(resourceFile), stringWriter, StandardCharsets.UTF_8.name());
-			pw = response.getWriter();
-			pw.write(stringWriter.toString());
-			pw.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (pw != null) {
-				pw.close();
-			}
-		}
+		beat.getRequest().getRequestDispatcher("/statics/a.png").forward(beat.getRequest(), beat.getResponse());
 	}
 }

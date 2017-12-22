@@ -30,6 +30,7 @@ public class VelocityInitial implements AppInit{
 	public void init() {
 		try {
 			LOG.info("velocity initial start...");
+			LOG.debug("loader.path:"+Constant.WEBAPPPATH+"META-INF/resources");
 			Velocity.init(initVelocityProperties());
 			LOG.info("velocity initial complete");
 		}catch(Exception e) {
@@ -55,7 +56,7 @@ public class VelocityInitial implements AppInit{
 	    p.put("runtime.log.logsystem.log4j.category", "velocity_log");
 	    p.put("file.resource.loader.cache", "true");
 	    p.put("file.resource.loader.modificationCheckInterval", "0");
-	    p.put("file.resource.loader.path", Constant.WEBAPPPATH);
+	    p.put("file.resource.loader.path", Constant.WEBAPPPATH+"META-INF/resources");
 	    return p;
 	}
 }

@@ -36,8 +36,8 @@ import wang.igood.gmvc.initial.AppInitial;
 * 		1.2：doFilter   	请求过滤分发
 * 		1.3：destroy		消亡
 */
-//@WebFilter(urlPatterns = { "/*" }, asyncSupported = true)
-public class Bootstrap implements Filter {
+@WebFilter(urlPatterns = { "/*" }, asyncSupported = true)
+public class Bootstrap implements Filter  {
 
 	private static final Logger logger = LoggerFactory.getLogger(Bootstrap.class);
 	private static final AtomicBoolean hasInit = new AtomicBoolean(false);
@@ -58,7 +58,6 @@ public class Bootstrap implements Filter {
 		}
 		logger.info("GMVC initial complete. cost time : " + (System.currentTimeMillis() - start) + "ms");
 	}
-
 	/**
 	 * <a>1.2：请求过滤分发</a>
 	 * @param request
@@ -68,6 +67,8 @@ public class Bootstrap implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain arg2)
 			throws IOException, ServletException {
+		//request.getRequestDispatcher("/statics/a.png").forward(request, response);
+		
 		HttpServletRequest httpReq = (HttpServletRequest) request;
 		HttpServletResponse httpResp = (HttpServletResponse) response;
 
