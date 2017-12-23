@@ -4,8 +4,7 @@
 
 	<groupId>wang.igood</groupId>
 	<artifactId>gmvc</artifactId>
-	<version>0.0.7</version>
-	<packaging>war</packaging>
+	<version>0.0.8</version>
 
 	<properties>
 		<jdk.version>1.7</jdk.version>

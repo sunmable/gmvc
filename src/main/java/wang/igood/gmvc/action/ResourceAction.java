@@ -28,6 +28,10 @@ public class ResourceAction implements Action {
 		supportMethods.add(HttpMethod.GET);
 	}
 
+	public File getResourceFile() {
+		return resourceFile;
+	}
+	
 	@Override
 	public String path() {
 		return path;
@@ -35,7 +39,7 @@ public class ResourceAction implements Action {
 
 	@Override
 	public ActionResult invoke() {
-		return new ResourceActionResult(path,resourceFile);
+		return new ResourceActionResult(path);
 	}
 
 	@Override

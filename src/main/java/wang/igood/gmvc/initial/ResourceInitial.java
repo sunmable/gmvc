@@ -25,11 +25,11 @@ import wang.igood.gmvc.common.AppInit;
 public class ResourceInitial implements AppInit{
 	
 	private static final Logger LOG = LoggerFactory.getLogger(ResourceInitial.class);
-	private static final Map<String,ResourceAction> resourceActionMap = new HashMap<String, ResourceAction>();
+	//private static final Map<String,ResourceAction> resourceActionMap = new HashMap<String, ResourceAction>();
 	private static String RESPATH;
 	
 	public ResourceInitial() {
-		RESPATH = Constant.WEBAPPPATH+"META-INF/resources/statics";
+		RESPATH = Constant.WEBAPPPATH+"META-INF/resources";
 	}
 	
 	/**
@@ -43,7 +43,7 @@ public class ResourceInitial implements AppInit{
 		for(ResourceAction action : actions) {
 			String key = action.path().replace(RESPATH, "").replace(" ", "");
 			LOG.debug("----------key:{},path:{}",key,action.path());
-			resourceActionMap.put(key, action);
+			//resourceActionMap.put(key, action);
 		}
 	}
 	
@@ -72,6 +72,6 @@ public class ResourceInitial implements AppInit{
 	}
 
 	public static Map<String, ResourceAction> getResourceactionmap() {
-		return resourceActionMap;
+		return null;
 	}
 }

@@ -1,9 +1,9 @@
 package wang.igood.gmvc.action.result;
 
-import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,22 +23,20 @@ public class ResourceActionResult implements ActionResult {
 
 	private final static Logger logger = LoggerFactory.getLogger(ResourceActionResult.class);
 	
-	private String path;
-	private File resourceFile;
+	private final String path;
 	
 	/**
 	 * <a>1.1:构造函数</a>
 	 * @param viewName 		Html文件名
 	 * */
-	public ResourceActionResult(String path,File resourceFile) {
+	public ResourceActionResult(String path) {
 		this.path = path;
-		this.resourceFile = resourceFile;
 	}
 	
 	@Override
 	public void render() throws ServletException, IOException {
 		logger.debug("path:"+path);
 		RequestContext beat = RequestContext.current();
-		beat.getRequest().getRequestDispatcher("/statics/a.png").forward(beat.getRequest(), beat.getResponse());
+		beat.getRequest().getRequestDispatcher("/statics"+path).forward(beat.getRequest(), beat.getResponse());
 	}
 }

@@ -1,10 +1,16 @@
 package wang.igood.gmvc.action.result;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -12,7 +18,9 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.io.VelocityWriter;
 
 import wang.igood.gmvc.Constant;
+import wang.igood.gmvc.action.ResourceAction;
 import wang.igood.gmvc.context.RequestContext;
+import wang.igood.gmvc.initial.ResourceInitial;
 
 /************************************************************
  * <a>正常HTML结果</a>
@@ -39,29 +47,37 @@ public class MethodActionResult implements ActionResult {
 
 	/**
 	 * <a>1.2:Velocity渲染业务</a>
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 * */
 	@Override
-	public void render() {
+	public void render() throws FileNotFoundException, IOException {
+		String path = "templates/"+ viewName + suffix;
 		RequestContext requestContext = RequestContext.current();
-
-		HttpServletResponse response = requestContext.getResponse();
-		response.setContentType("text/html;charset=\"" + Constant.ENCODING + "\"");
-		response.setCharacterEncoding(Constant.ENCODING);
-
-		Map<String, Object> data = requestContext.getModel().getModel();
-		Context context = new VelocityContext(data);
-		VelocityWriter vw = null;
-		try {
-			vw = new VelocityWriter(response.getWriter());
-			String path = "templates" +"\\"+ viewName + suffix;
-			Template template = Velocity.getTemplate(path);
-			template.merge(context, vw);
-			vw.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if(vw != null)
-				vw.recycle(null);
+		
+		InputStream is = requestContext.getRequest().getServletContext().getResourceAsStream(path);
+		if(is != null) {
+			String html = IOUtils.toString(is, Constant.ENCODING);
+			new TemplateActionResult(html).render();
+		}else {
+			HttpServletResponse response = requestContext.getResponse();
+			response.setContentType("text/html;charset=\"" + Constant.ENCODING + "\"");
+			response.setCharacterEncoding(Constant.ENCODING);
+			Map<String, Object> data = requestContext.getModel().getModel();
+			Context context = new VelocityContext(data);
+			VelocityWriter vw = null;
+			try {
+				vw = new VelocityWriter(response.getWriter());
+				Template template = Velocity.getTemplate(path);
+				template.merge(context, vw);
+				vw.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				if(vw != null)
+					vw.recycle(null);
+			}
 		}
+		
 	}
 }

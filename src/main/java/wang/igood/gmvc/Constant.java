@@ -18,7 +18,7 @@ public class Constant {
 	public static void  init() {
 		WEBAPPPATH =Constant.class.getClassLoader().getResource("").getPath();
 		InputStream in = Constant.class.getResourceAsStream("application.properties");
-		scanBasePackage.add("wang.igood.gmvc");
+		scanBasePackage.add("wang.igood");
 		if(in != null) {
 			 try {
 				 Properties pps = new Properties();
