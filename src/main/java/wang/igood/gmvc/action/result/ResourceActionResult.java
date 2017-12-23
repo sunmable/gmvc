@@ -35,7 +35,7 @@ public class ResourceActionResult implements ActionResult {
 	
 	@Override
 	public void render() throws ServletException, IOException {
-		logger.debug("path:"+path);
+		logger.debug("path:/statics"+path);
 		RequestContext beat = RequestContext.current();
 		beat.getRequest().getRequestDispatcher("/statics"+path).forward(beat.getRequest(), beat.getResponse());
 	}

@@ -1,4 +1,4 @@
-package com.chaboshi.web.controller;
+package wang.igood.gmvc.test;
 
 import wang.igood.gmvc.action.result.ActionResult;
 import wang.igood.gmvc.action.result.MethodActionResult;

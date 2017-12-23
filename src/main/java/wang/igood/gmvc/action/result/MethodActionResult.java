@@ -1,11 +1,8 @@
 package wang.igood.gmvc.action.result;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -16,11 +13,10 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.io.VelocityWriter;
+import org.apache.velocity.runtime.resource.ResourceManager;
 
 import wang.igood.gmvc.Constant;
-import wang.igood.gmvc.action.ResourceAction;
 import wang.igood.gmvc.context.RequestContext;
-import wang.igood.gmvc.initial.ResourceInitial;
 
 /************************************************************
  * <a>正常HTML结果</a>
@@ -34,7 +30,7 @@ import wang.igood.gmvc.initial.ResourceInitial;
  */
 public class MethodActionResult implements ActionResult {
 
-	private final String viewName;
+	private String viewName;
 	private static final String suffix = Constant.PAGESUFFIX;
 
 	/**
@@ -52,11 +48,14 @@ public class MethodActionResult implements ActionResult {
 	 * */
 	@Override
 	public void render() throws FileNotFoundException, IOException {
-		String path = "templates/"+ viewName + suffix;
-		RequestContext requestContext = RequestContext.current();
+		if(viewName.startsWith("/")) {
+			viewName = viewName.substring(1);
+		}
+		String path = "/templates/"+ viewName + suffix;
 		
-		InputStream is = requestContext.getRequest().getServletContext().getResourceAsStream(path);
-		if(is != null) {
+		RequestContext requestContext = RequestContext.current();
+		if(!Velocity.resourceExists(path)) {
+			InputStream is = requestContext.getRequest().getServletContext().getResourceAsStream(path);
 			String html = IOUtils.toString(is, Constant.ENCODING);
 			new TemplateActionResult(html).render();
 		}else {
@@ -65,6 +64,7 @@ public class MethodActionResult implements ActionResult {
 			response.setCharacterEncoding(Constant.ENCODING);
 			Map<String, Object> data = requestContext.getModel().getModel();
 			Context context = new VelocityContext(data);
+			
 			VelocityWriter vw = null;
 			try {
 				vw = new VelocityWriter(response.getWriter());

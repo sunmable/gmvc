@@ -104,7 +104,7 @@ public class RequestDispatcher {
 	 * */
 	private MethodAction findAction(RequestContext context) {
 		String uri = context.getRequest().getRequestURI();
-		logger.info("uri:{}",uri);
+		logger.debug("uri:{}",uri);
 		MethodAction methodAction = null; 
 		MethodAction methodAction_ = RequestInitial.getActionmap().get(uri);
 		if(methodAction_ != null  && methodAction_.matchHttpMethod()) {
@@ -119,14 +119,7 @@ public class RequestDispatcher {
 	 * */
 	private ResourceAction findResourceAction(RequestContext context) {
 		String uri = context.getRequest().getRequestURI();
-		logger.info("uri:{}",uri);
-		ResourceAction methodAction = null; 
-		ResourceAction methodAction_ = ResourceInitial.getResourceactionmap().get(uri);
-		if(methodAction_ != null  && methodAction_.matchHttpMethod()) {
-			methodAction = methodAction_;
-		}else {
-			methodAction = new ResourceAction(uri, null);
-		}
-		return methodAction;
+		logger.debug("uri:{}",uri);
+		return new ResourceAction(uri, null);
 	}
 }

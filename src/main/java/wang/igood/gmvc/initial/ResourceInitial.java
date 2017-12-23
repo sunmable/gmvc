@@ -22,10 +22,10 @@ import wang.igood.gmvc.common.AppInit;
 * 1：方法摘要
 * 		1.1：init   				初始化
 */
-public class ResourceInitial implements AppInit{
+public class ResourceInitial{
 	
 	private static final Logger LOG = LoggerFactory.getLogger(ResourceInitial.class);
-	//private static final Map<String,ResourceAction> resourceActionMap = new HashMap<String, ResourceAction>();
+	private static final Map<String,ResourceAction> resourceActionMap = new HashMap<String, ResourceAction>();
 	private static String RESPATH;
 	
 	public ResourceInitial() {
@@ -35,15 +35,14 @@ public class ResourceInitial implements AppInit{
 	/**
 	 * <a>1.1:初始化</a>
 	 * **/
-	@Override
+//	@Override
 	public void init() {
 		LOG.info("initial resource start...");
 		LOG.debug("RESPATH:{}",RESPATH);
 		List<ResourceAction> actions = getResourceActions(RESPATH);
 		for(ResourceAction action : actions) {
-			String key = action.path().replace(RESPATH, "").replace(" ", "");
-			LOG.debug("----------key:{},path:{}",key,action.path());
-			//resourceActionMap.put(key, action);
+			LOG.debug("resource key:{}",action.path());
+			resourceActionMap.put(action.path(), action);
 		}
 	}
 	
@@ -61,7 +60,8 @@ public class ResourceInitial implements AppInit{
 	private HashMap<String,File> getFilesPath(File file){
 		HashMap<String,File> fileNames = new HashMap<String,File>();
 		if(!file.isDirectory()) {
-			String key = file.getAbsolutePath().replace(RESPATH, "").replaceAll(" ", "").trim();
+			String key = file.getAbsolutePath().replace(RESPATH+"/statics", "").replaceAll(" ", "").trim();
+			key = key.replace(RESPATH+"/templates", "").replace(" ", "");
 			fileNames.put(key,file);
 		}else {
 			for(File file_ : file.listFiles()) {
@@ -71,7 +71,7 @@ public class ResourceInitial implements AppInit{
 		return fileNames;
 	}
 
-	public static Map<String, ResourceAction> getResourceactionmap() {
-		return null;
-	}
+//	public static Map<String, ResourceAction> getResourceactionmap() {
+//		return resourceActionMap;
+//	}
 }
