@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
    
+@SuppressWarnings("rawtypes")
 public abstract class ClassUtils {
  
     /** Suffix for array class names: "[]" */
@@ -49,7 +50,7 @@ public abstract class ClassUtils {
      * Map with primitive wrapper type as key and corresponding primitive
      * type as value, for example: Integer.class -> int.class.
      */
-    private static final Map<Class, Class> primitiveWrapperTypeMap = new HashMap<Class, Class>(8);
+	private static final Map<Class, Class> primitiveWrapperTypeMap = new HashMap<Class, Class>(8);
  
     /**
      * Map with primitive type as key and corresponding wrapper
@@ -513,7 +514,7 @@ public abstract class ClassUtils {
      * @return whether the class has a corresponding constructor
      * @see java.lang.Class#getMethod
      */
-    public static boolean hasConstructor(Class clazz, Class... paramTypes) {
+	public static boolean hasConstructor(Class clazz, Class... paramTypes) {
         return (getConstructorIfAvailable(clazz, paramTypes) != null);
     }
  
