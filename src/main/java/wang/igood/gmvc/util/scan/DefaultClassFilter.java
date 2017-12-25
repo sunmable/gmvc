@@ -19,10 +19,10 @@ import wang.igood.gmvc.Constant;
 import wang.igood.gmvc.util.ClassUtils;
 
 public abstract class DefaultClassFilter {
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultClassFilter.class);
 	protected static ClassLoader DefaultClassLoader = Thread.currentThread().getContextClassLoader();
 	protected final String packageName;
-	private JarFile jarFile;
 
 	protected DefaultClassFilter(final String packageName) {
 		this.packageName = packageName;
@@ -37,7 +37,7 @@ public abstract class DefaultClassFilter {
 		Set<Class<?>> clazzes = new HashSet<Class<?>>();
 		try {
 			clazzes.addAll(getClassList(DefaultClassLoader.getResources(packageName.replace(".", "/"))));
-			clazzes.addAll(getLocalClass(getProjectPath()));
+			clazzes.addAll(getLocalClass(Constant.WEBAPPPATH.replaceAll("classes/", "")));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -151,15 +151,20 @@ public abstract class DefaultClassFilter {
 		}
 	}
 
+	@SuppressWarnings("resource")
 	private Set<Class<?>> getLocalClass(String localPath) {
 		try {
 			Set<Class<?>> clazzes = new HashSet<Class<?>>();
 			File files = new File(localPath);
 			for (File file : files.listFiles()) {
 				String fileName = file.getName();
+				if(file.isDirectory()) {
+					clazzes.addAll(getLocalClass(file.getAbsolutePath()));
+					continue;
+				}
 				String protocol = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
 				if ("jar".equals(protocol)) {
-					jarFile = new JarFile(file.getAbsolutePath());
+					JarFile jarFile = new JarFile(file.getAbsolutePath());
 					if (jarFile != null) {
 						// 得到该jar文件下面的类实体
 						Enumeration<JarEntry> jarEntryEnumeration = jarFile.entries();
@@ -174,15 +179,15 @@ public abstract class DefaultClassFilter {
 							// 这里我们需要过滤不是class文件
 							if (jarEntryName.contains(".class") && !entry.isDirectory()) {
 								try {
-									String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replace("/", ".");
-									for(String path : Constant.scanBasePackage) {
-										if(className.contains(path)) {
-											Class<?> cls = ClassUtils.forName(className, ClassUtils.getDefaultClassLoader());
+									String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")) .replace("/", ".");
+									for (String path : Constant.scanBasePackage) {
+										if (className.contains(path)) {
+											Class<?> cls = ClassUtils.forName(className,ClassUtils.getDefaultClassLoader());
 											if (cls != null)
 												clazzes.add(cls);
 										}
 									}
-									
+
 								} catch (Exception e) {
 									LOGGER.error(e.getLocalizedMessage());
 									continue;
@@ -198,22 +203,6 @@ public abstract class DefaultClassFilter {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	private static String getProjectPath() {
-
-		java.net.URL url = DefaultClassFilter.class.getProtectionDomain().getCodeSource().getLocation();
-		String filePath = null;
-		try {
-			filePath = java.net.URLDecoder.decode(url.getPath(), "utf-8");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if (filePath.endsWith(".jar"))
-			filePath = filePath.substring(0, filePath.lastIndexOf("/") + 1);
-		java.io.File file = new java.io.File(filePath);
-		filePath = file.getAbsolutePath();
-		return filePath;
 	}
 
 	/**

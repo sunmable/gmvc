@@ -4,7 +4,7 @@
 
 	<groupId>wang.igood</groupId>
 	<artifactId>gmvc</artifactId>
-	<version>0.0.8</version>
+	<version>1.0.0</version>
 
 	<properties>
 		<jdk.version>1.7</jdk.version>
@@ -61,7 +61,6 @@
 		<defaultGoal>install</defaultGoal>
 		<plugins>
 			<!-- 资源拷贝 -->
-			<!-- 
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>3.0.2</version>
@@ -87,7 +86,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			 -->
 			<!-- 生成sources源码包的插件 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
