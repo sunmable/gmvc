@@ -12,7 +12,6 @@ import wang.igood.gmvc.action.result.ActionResult;
 import wang.igood.gmvc.common.Interceptor;
 import wang.igood.gmvc.context.RequestContext;
 import wang.igood.gmvc.initial.RequestInitial;
-import wang.igood.gmvc.initial.ResourceInitial;
 
 /************************************************************
 * <a>请求分发器</a>

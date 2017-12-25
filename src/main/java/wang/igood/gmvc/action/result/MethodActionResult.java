@@ -13,7 +13,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.io.VelocityWriter;
-import org.apache.velocity.runtime.resource.ResourceManager;
 
 import wang.igood.gmvc.Constant;
 import wang.igood.gmvc.context.RequestContext;
