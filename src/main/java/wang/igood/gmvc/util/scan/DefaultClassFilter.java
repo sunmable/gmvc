@@ -37,9 +37,10 @@ public abstract class DefaultClassFilter {
 		Set<Class<?>> clazzes = new HashSet<Class<?>>();
 		try {
 			clazzes.addAll(getClassList(DefaultClassLoader.getResources(packageName.replace(".", "/"))));
-			clazzes.addAll(getLocalClass(Constant.WEBAPPPATH.replaceAll("classes/", "")));
+			clazzes.addAll(getLocalClass(Constant.WEBAPPPATH+"../"));
 		} catch (Exception e) {
 			e.printStackTrace();
+			LOGGER.error(e.getLocalizedMessage());
 		}
 		return clazzes;
 	}
@@ -52,7 +53,6 @@ public abstract class DefaultClassFilter {
 			URL url;
 			while (urls.hasMoreElements()) {
 				url = urls.nextElement();
-
 				if (url != null) {
 					LOGGER.debug("scan url >> " + url.toString());
 					// 获取协议名（分为 file 与 jar）
@@ -172,7 +172,6 @@ public abstract class DefaultClassFilter {
 
 							JarEntry entry = jarEntryEnumeration.nextElement();
 							String jarEntryName = entry.getName();
-							LOGGER.debug("load jarEntryName name is :{}", jarEntryName);
 							if (jarEntryName.charAt(0) == '/') {
 								jarEntryName = jarEntryName.substring(1);
 							}

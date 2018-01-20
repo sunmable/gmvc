@@ -57,7 +57,7 @@ public class AppInitial {
 			  initSet.add((Class<? extends AppInit>) clazz);
 			}
 		}
-		LOG.info("scan initial complete!");
+		LOG.info("scan initial complete! size:"+initSet.size());
 		return initSet;
 	}
 }
